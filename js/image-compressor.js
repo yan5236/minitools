@@ -1,7 +1,7 @@
 class ImageCompressor {
     constructor() {
-        this.imageQueue = new Map(); // 存储待处理的图片
-        this.compressedImages = new Map(); // 存储压缩后的图片
+        this.imageQueue = new Map();
+        this.compressedImages = new Map();
         this.setupEventListeners();
     }
 
@@ -59,26 +59,26 @@ class ImageCompressor {
         });
 
         // 压缩按钮事件
-        document.getElementById('compressBtn').addEventListener('click', () => {
-            this.compressImage();
+        document.getElementById('compressBtn').addEventListener('click', async () => {
+            if (this.imageQueue.size === 0) {
+                alert('请先添加图片！');
+                return;
+            }
+            
+            const batchCompress = document.getElementById('batchCompress').checked;
+            if (batchCompress) {
+                await this.compressAllImages();
+            } else {
+                const currentImage = this.imageQueue.values().next().value;
+                if (currentImage) {
+                    await this.compressImage(currentImage.file);
+                }
+            }
         });
 
         // 下载按钮事件
         document.getElementById('downloadBtn').addEventListener('click', () => {
-            if (this.compressedImages.size === 0) {
-                alert('没有可下载的图片！');
-                return;
-            }
-
-            // 如果只有一张图片，直接下载
-            if (this.compressedImages.size === 1) {
-                const [filename, blob] = this.compressedImages.entries().next().value;
-                this.downloadImage(blob, filename);
-                return;
-            }
-
-            // 如果有多张图片，创建zip文件
-            this.downloadAsZip();
+            this.downloadImages();
         });
 
         // 宽度输入联动
@@ -157,143 +157,119 @@ class ImageCompressor {
         return div;
     }
 
-    async compressImage() {
-        const quality = parseInt(document.getElementById('qualitySlider').value) / 100;
-        const batchCompress = document.getElementById('batchCompress').checked;
-        const resultGrid = document.getElementById('resultGrid');
-        resultGrid.innerHTML = '';
-
+    async compressImage(file) {
         try {
-            for (const [id, item] of this.imageQueue) {
-                if (item.status === 'done' && !batchCompress) continue;
+            const options = {
+                maxSizeMB: this.getMaxSize(),
+                maxWidthOrHeight: this.getMaxDimension(),
+                useWebWorker: true,
+                fileType: this.getOutputFormat(),
+                initialQuality: document.getElementById('qualitySlider').value / 100
+            };
 
-                const result = await this.processImage(item.file, quality);
-                this.compressedImages.set(id, result);
-                item.status = 'done';
-
-                const resultItem = this.createResultItem(item.file, result, id);
-                resultGrid.appendChild(resultItem);
-            }
-
-            document.getElementById('previewPanel').style.display = 'block';
+            const compressedBlob = await imageCompression(file, options);
+            
+            // 存储压缩后的图片
+            this.compressedImages.set(file.name, compressedBlob);
+            
+            // 更新预览
+            const previewUrl = URL.createObjectURL(compressedBlob);
+            this.updatePreview(file.name, previewUrl, file.size, compressedBlob.size);
+            
+            // 显示下载按钮
+            document.getElementById('downloadBtn').style.display = 'block';
+            
+            return true;
         } catch (error) {
             console.error('压缩失败:', error);
-            alert('图片压缩失败，请重试！');
+            alert(`压缩失败: ${file.name}`);
+            return false;
         }
     }
 
-    async processImage(file, quality) {
-        const img = await this.createImage(file);
-        const keepOriginalFormat = document.getElementById('keepOriginalFormat').checked;
-        const outputFormat = keepOriginalFormat ? file.type : document.getElementById('formatSelect').value;
+    async compressAllImages() {
+        const total = this.imageQueue.size;
+        let success = 0;
         
-        // 获取用户输入的尺寸
-        let targetWidth = parseInt(document.getElementById('widthInput').value) || 0;
-        let targetHeight = parseInt(document.getElementById('heightInput').value) || 0;
-        const keepAspectRatio = document.getElementById('keepAspectRatio').checked;
-        
-        // 计算最终尺寸
-        let width = img.width;
-        let height = img.height;
-        
-        if (targetWidth || targetHeight) {
-            if (keepAspectRatio) {
-                const ratio = img.width / img.height;
-                if (targetWidth && !targetHeight) {
-                    targetHeight = Math.round(targetWidth / ratio);
-                } else if (targetHeight && !targetWidth) {
-                    targetWidth = Math.round(targetHeight * ratio);
-                }
+        for (const [_, item] of this.imageQueue) {
+            if (await this.compressImage(item.file)) {
+                success++;
             }
-            width = targetWidth || width;
-            height = targetHeight || height;
-        } else {
-            // 如果没有指定新尺寸，使用默认的最大尺寸限制
-            const maxDimensions = this.calculateSize(img, 1920, 1080);
-            width = maxDimensions.width;
-            height = maxDimensions.height;
         }
 
-        // 创建canvas并绘制图片
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
+        if (success > 0) {
+            alert(`压缩完成！成功: ${success}/${total}`);
+        }
+    }
 
-        // 如果是PNG或WebP，设置白色背景
-        if (outputFormat === 'image/png' || outputFormat === 'image/webp') {
-            ctx.fillStyle = '#FFFFFF';
-            ctx.fillRect(0, 0, width, height);
+    async downloadImages() {
+        if (this.compressedImages.size === 0) {
+            alert('没有可下载的图片！');
+            return;
         }
 
-        // 使用双线性插值实现更平滑的缩放
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
-        
-        ctx.drawImage(img, 0, 0, width, height);
-
-        return new Promise((resolve) => {
-            canvas.toBlob((blob) => {
-                resolve({
-                    blob,
-                    width,
-                    height,
-                    url: URL.createObjectURL(blob),
-                    format: outputFormat
-                });
-            }, outputFormat, quality);
-        });
+        try {
+            if (this.compressedImages.size === 1) {
+                // 单张图片直接下载
+                const [filename, blob] = this.compressedImages.entries().next().value;
+                await this.downloadSingleImage(blob, filename);
+            } else {
+                // 多张图片打包下载
+                await this.downloadAsZip();
+            }
+        } catch (error) {
+            console.error('下载失败:', error);
+            alert('下载失败，请重试！');
+        }
     }
 
-    createResultItem(originalFile, compressedResult, id) {
-        const div = document.createElement('div');
-        div.className = 'result-item';
-        const compressionRatio = ((1 - compressedResult.blob.size / originalFile.size) * 100).toFixed(1);
-        const originalFormat = originalFile.type.split('/')[1].toUpperCase();
-        const newFormat = compressedResult.format.split('/')[1].toUpperCase();
-        
-        div.innerHTML = `
-            <div class="comparison">
-                <div class="image-preview">
-                    <img src="${URL.createObjectURL(originalFile)}" alt="原图">
-                    <div class="format-badge">${originalFormat}</div>
-                </div>
-                <div class="image-preview">
-                    <img src="${compressedResult.url}" alt="转换后">
-                    <div class="format-badge">${newFormat}</div>
-                </div>
-            </div>
-            <div class="info-group">
-                <span>文件名: ${originalFile.name}</span>
-                <span class="compression-ratio">压缩率: ${compressionRatio}%</span>
-            </div>
-            <div class="info-group">
-                <span>原始大小: ${this.formatFileSize(originalFile.size)}</span>
-                <span>处理后: ${this.formatFileSize(compressedResult.blob.size)}</span>
-            </div>
-            <div class="info-group">
-                <span>格式转换: ${originalFormat} → ${newFormat}</span>
-            </div>
-            <button class="btn btn-success w-100 download-btn" onclick="imageCompressor.downloadImage('${id}')">
-                <i class="bi bi-download"></i> 下载处理后的图片
-            </button>
-        `;
-        return div;
-    }
-
-    downloadImage(id) {
-        const item = this.imageQueue.get(id);
-        const compressed = this.compressedImages.get(id);
-        if (!item || !compressed) return;
-
-        const format = compressed.format.split('/')[1].toLowerCase();
-        const extension = format === 'jpeg' ? 'jpg' : format;
-        const originalName = item.file.name.split('.')[0];
-
+    async downloadSingleImage(blob, filename) {
         const link = document.createElement('a');
-        link.href = compressed.url;
-        link.download = `${originalName}.${extension}`;
+        link.href = URL.createObjectURL(blob);
+        link.download = `compressed_${filename}`;
+        document.body.appendChild(link);
         link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+    }
+
+    async downloadAsZip() {
+        const zip = new JSZip();
+        
+        for (const [filename, blob] of this.compressedImages) {
+            const arrayBuffer = await blob.arrayBuffer();
+            zip.file(`compressed_${filename}`, arrayBuffer);
+        }
+        
+        const zipBlob = await zip.generateAsync({type: 'blob'});
+        await this.downloadSingleImage(zipBlob, 'compressed_images.zip');
+    }
+
+    updatePreview(filename, previewUrl, originalSize, compressedSize) {
+        const resultGrid = document.getElementById('resultGrid');
+        const resultItem = document.createElement('div');
+        resultItem.className = 'result-item';
+        
+        const compressionRatio = ((1 - compressedSize / originalSize) * 100).toFixed(1);
+        const originalSizeStr = this.formatFileSize(originalSize);
+        const compressedSizeStr = this.formatFileSize(compressedSize);
+
+        resultItem.innerHTML = `
+            <div class="preview-image">
+                <img src="${previewUrl}" alt="${filename}">
+            </div>
+            <div class="preview-info">
+                <div class="filename">${filename}</div>
+                <div class="size-info">
+                    <span>原始大小: ${originalSizeStr}</span>
+                    <span>压缩后: ${compressedSizeStr}</span>
+                    <span>���缩率: ${compressionRatio}%</span>
+                </div>
+            </div>
+        `;
+
+        resultGrid.appendChild(resultItem);
+        document.getElementById('previewPanel').style.display = 'block';
     }
 
     createImage(file) {
@@ -366,9 +342,9 @@ class ImageCompressor {
             // 更新预览
             const previewUrl = URL.createObjectURL(compressedBlob);
             this.updatePreview(file.name, previewUrl, file.size, compressedBlob.size);
-            
-            // 更新进度
-            this.updateProgress();
+
+            // 显示下载按钮
+            document.getElementById('downloadBtn').style.display = 'block';
             
         } catch (error) {
             console.error('压缩失败:', error);
@@ -401,6 +377,74 @@ class ImageCompressor {
                 console.error('创建zip文件失败:', error);
                 alert('下载失败，请重试！');
             });
+    }
+
+    async downloadImages() {
+        if (this.compressedImages.size === 0) {
+            alert('没有可下载的图片！');
+            return;
+        }
+
+        try {
+            if (this.compressedImages.size === 1) {
+                // 单张图片直接下载
+                const [filename, blob] = this.compressedImages.entries().next().value;
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `compressed_${filename}`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(link.href);
+            } else {
+                // 多张图片打包下载
+                const zip = new JSZip();
+                
+                for (const [filename, blob] of this.compressedImages) {
+                    const arrayBuffer = await blob.arrayBuffer();
+                    zip.file(`compressed_${filename}`, arrayBuffer);
+                }
+                
+                const zipBlob = await zip.generateAsync({type: 'blob'});
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(zipBlob);
+                link.download = 'compressed_images.zip';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(link.href);
+            }
+        } catch (error) {
+            console.error('下载失败:', error);
+            alert('下载失败，请重试！');
+        }
+    }
+
+    updatePreview(filename, previewUrl, originalSize, compressedSize) {
+        const resultGrid = document.getElementById('resultGrid');
+        const resultItem = document.createElement('div');
+        resultItem.className = 'result-item';
+        
+        const compressionRatio = ((1 - compressedSize / originalSize) * 100).toFixed(1);
+        const originalSizeStr = this.formatFileSize(originalSize);
+        const compressedSizeStr = this.formatFileSize(compressedSize);
+
+        resultItem.innerHTML = `
+            <div class="preview-image">
+                <img src="${previewUrl}" alt="${filename}">
+            </div>
+            <div class="preview-info">
+                <div class="filename">${filename}</div>
+                <div class="size-info">
+                    <span>原始大小: ${originalSizeStr}</span>
+                    <span>压缩后: ${compressedSizeStr}</span>
+                    <span>压缩率: ${compressionRatio}%</span>
+                </div>
+            </div>
+        `;
+
+        resultGrid.appendChild(resultItem);
+        document.getElementById('previewPanel').style.display = 'block';
     }
 }
 

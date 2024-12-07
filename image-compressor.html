@@ -122,7 +122,12 @@
 
             <!-- 预览区域 -->
             <div class="preview-container" id="previewPanel" style="display: none;">
-                <h5 class="mb-3">压缩结果</h5>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">压缩结果</h5>
+                    <button class="btn btn-success" id="downloadBtn" style="display: none;">
+                        <i class="bi bi-download"></i> 下载图片
+                    </button>
+                </div>
                 <div id="resultGrid" class="result-grid"></div>
             </div>
         </div>

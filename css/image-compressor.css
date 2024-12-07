@@ -215,4 +215,32 @@
     font-size: 0.875rem;
     color: #6c757d;
     margin-top: 0.25rem;
+}
+
+/* 添加下载按钮样式 */
+#downloadBtn {
+    white-space: nowrap;
+}
+
+#downloadBtn i {
+    margin-right: 0.5rem;
+}
+
+.preview-info {
+    padding: 0.5rem;
+}
+
+.preview-info .filename {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    word-break: break-all;
+}
+
+.preview-info .size-info {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.preview-info .size-info span {
+    display: block;
 } 
