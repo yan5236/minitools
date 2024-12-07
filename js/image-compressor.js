@@ -65,7 +65,20 @@ class ImageCompressor {
 
         // 下载按钮事件
         document.getElementById('downloadBtn').addEventListener('click', () => {
-            this.downloadImage();
+            if (this.compressedImages.size === 0) {
+                alert('没有可下载的图片！');
+                return;
+            }
+
+            // 如果只有一张图片，直接下载
+            if (this.compressedImages.size === 1) {
+                const [filename, blob] = this.compressedImages.entries().next().value;
+                this.downloadImage(blob, filename);
+                return;
+            }
+
+            // 如果有多张图片，创建zip文件
+            this.downloadAsZip();
         });
 
         // 宽度输入联动
@@ -322,6 +335,72 @@ class ImageCompressor {
         }
 
         return `${size.toFixed(2)} ${units[unitIndex]}`;
+    }
+
+    // 添加单个图片下载方法
+    downloadImage(blob, filename) {
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `compressed_${filename}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+    }
+
+    // 修改压缩完成后的处理
+    async compressImage(file) {
+        try {
+            const options = {
+                maxSizeMB: this.getMaxSize(),
+                maxWidthOrHeight: this.getMaxDimension(),
+                useWebWorker: true,
+                fileType: this.getOutputFormat()
+            };
+
+            const compressedBlob = await imageCompression(file, options);
+            
+            // 存储压缩后的图片
+            this.compressedImages.set(file.name, compressedBlob);
+            
+            // 更新预览
+            const previewUrl = URL.createObjectURL(compressedBlob);
+            this.updatePreview(file.name, previewUrl, file.size, compressedBlob.size);
+            
+            // 更新进度
+            this.updateProgress();
+            
+        } catch (error) {
+            console.error('压缩失败:', error);
+            alert(`压缩失败: ${file.name}`);
+        }
+    }
+
+    // 添加zip下载方法
+    async downloadAsZip() {
+        const zip = new JSZip();
+        
+        // 添加所有压缩后的图片到zip
+        for (const [filename, blob] of this.compressedImages) {
+            const arrayBuffer = await blob.arrayBuffer();
+            zip.file(`compressed_${filename}`, arrayBuffer);
+        }
+        
+        // 生成zip文件并下载
+        zip.generateAsync({type: 'blob'})
+            .then(zipBlob => {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(zipBlob);
+                link.download = 'compressed_images.zip';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(link.href);
+            })
+            .catch(error => {
+                console.error('创建zip文件失败:', error);
+                alert('下载失败，请重试！');
+            });
     }
 }
 
