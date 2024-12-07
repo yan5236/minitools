@@ -1,0 +1,54 @@
+.time-converter-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.converter-box {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+}
+
+.result-box {
+    background-color: white;
+    border-radius: 5px;
+    padding: 1rem;
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.result-item:last-child {
+    border-bottom: none;
+}
+
+.result-item label {
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.result-item span {
+    font-family: monospace;
+    font-size: 1.1rem;
+}
+
+.current-time-box {
+    background-color: white;
+    border-radius: 5px;
+    padding: 1rem;
+}
+
+@media (min-width: 768px) {
+    .time-converter-container {
+        padding: 0 1rem;
+    }
+} 

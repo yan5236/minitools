@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本编辑器 - 小工具集合</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- CodeMirror CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/dialog/dialog.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/search/matchesonscrollbar.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/text-editor.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container-fluid">
+            <div class="navbar-left">
+                <a class="navbar-brand" href="index.html">
+                    <i class="bi bi-tools"></i> 小工具集合
+                </a>
+                <div class="navbar-nav">
+                    <a class="nav-link" href="index.html">
+                        <i class="bi bi-house"></i> 首页
+                    </a>
+                    <a class="nav-link" href="index.html#tools">
+                        <i class="bi bi-gear"></i> 工具
+                    </a>
+                    <a class="nav-link" href="index.html#about">
+                        <i class="bi bi-info-circle"></i> 关于
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container-fluid py-4">
+        <div class="text-editor-container">
+            <!-- 工具栏 -->
+            <div class="toolbar mb-3">
+                <div class="btn-group me-2">
+                    <button class="btn btn-outline-primary" id="newFile">
+                        <i class="bi bi-file-earmark-plus"></i> 新建
+                    </button>
+                    <button class="btn btn-outline-primary" id="openFile">
+                        <i class="bi bi-folder2-open"></i> 打开
+                    </button>
+                    <button class="btn btn-outline-primary" id="saveFile">
+                        <i class="bi bi-save"></i> 保存
+                    </button>
+                </div>
+                <div class="btn-group me-2">
+                    <button class="btn btn-outline-secondary" id="undoBtn">
+                        <i class="bi bi-arrow-counterclockwise"></i> 撤销
+                    </button>
+                    <button class="btn btn-outline-secondary" id="redoBtn">
+                        <i class="bi bi-arrow-clockwise"></i> 重做
+                    </button>
+                </div>
+                <div class="btn-group me-2">
+                    <button class="btn btn-outline-secondary" id="findBtn">
+                        <i class="bi bi-search"></i> 查找
+                    </button>
+                    <button class="btn btn-outline-secondary" id="replaceBtn">
+                        <i class="bi bi-search-heart"></i> 替换
+                    </button>
+                </div>
+                <div class="btn-group me-2">
+                    <button class="btn btn-outline-danger" id="clearBtn">
+                        <i class="bi bi-trash"></i> 清空
+                    </button>
+                </div>
+                <div class="btn-group">
+                    <select class="form-select" id="themeSelect">
+                        <option value="default">默认主题</option>
+                        <option value="monokai">Monokai</option>
+                        <option value="dracula">Dracula</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 编辑器区域 -->
+            <div class="editor-wrapper">
+                <textarea id="editor"></textarea>
+            </div>
+
+            <!-- 状态栏 -->
+            <div class="status-bar">
+                <div class="status-item">
+                    <span id="cursorPos">行: 1, 列: 1</span>
+                </div>
+                <div class="status-item">
+                    <span id="charCount">字符数: 0</span>
+                </div>
+                <div class="status-item">
+                    <span id="lineCount">行数: 1</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 小工具集合. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <!-- 依赖库 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/search/search.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/search/searchcursor.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/dialog/dialog.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/scroll/annotatescrollbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/search/matchesonscrollbar.min.js"></script>
+    <script src="js/text-editor.js"></script>
+</body>
+</html> 

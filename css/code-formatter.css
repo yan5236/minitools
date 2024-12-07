@@ -1,0 +1,71 @@
+.code-formatter-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.control-panel {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+.editor-container {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.editor-wrapper {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+.editor-wrapper h5 {
+    margin-bottom: 1rem;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.CodeMirror {
+    height: 500px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+@media (max-width: 992px) {
+    .editor-container {
+        grid-template-columns: 1fr;
+    }
+
+    .button-group {
+        flex-direction: row;
+        justify-content: center;
+        padding: 1rem 0;
+    }
+}
+
+/* 添加代码格式化器移动端样式 */
+@media (max-width: 768px) {
+    .control-panel .row {
+        flex-direction: column;
+    }
+
+    .control-panel .col-auto {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .form-select, .form-control {
+        width: 100%;
+    }
+} 

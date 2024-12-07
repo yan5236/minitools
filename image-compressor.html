@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片处理 - 小工具集合</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/image-compressor.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container-fluid">
+            <div class="navbar-left">
+                <a class="navbar-brand" href="index.html">
+                    <i class="bi bi-tools"></i> 小工具集合
+                </a>
+                <div class="navbar-nav">
+                    <a class="nav-link" href="index.html">
+                        <i class="bi bi-house"></i> 首页
+                    </a>
+                    <a class="nav-link" href="index.html#tools">
+                        <i class="bi bi-gear"></i> 工具
+                    </a>
+                    <a class="nav-link" href="index.html#about">
+                        <i class="bi bi-info-circle"></i> 关于
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-4">
+        <div class="image-compressor-container">
+            <!-- 上传区域 -->
+            <div class="upload-area" id="dropZone">
+                <i class="bi bi-cloud-arrow-up"></i>
+                <p>拖放图片到这里或点击上传</p>
+                <p class="text-muted">支持批量上传，可压缩和转换格式</p>
+                <input type="file" id="fileInput" accept="image/*" multiple hidden>
+            </div>
+
+            <!-- 压缩设置 -->
+            <div class="compression-settings" id="settingsPanel" style="display: none;">
+                <h5 class="mb-3">处理选项</h5>
+                <!-- 尺寸调整选项 -->
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label">调整尺寸:</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="widthInput" placeholder="宽度" min="1">
+                            <span class="input-group-text">×</span>
+                            <input type="number" class="form-control" id="heightInput" placeholder="高度" min="1">
+                            <button class="btn btn-outline-secondary" type="button" id="resetSize">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                            </button>
+                        </div>
+                        <div class="form-text">留空表示保持原始尺寸</div>
+                    </div>
+                    <div class="col-auto d-flex align-items-end">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="keepAspectRatio" checked>
+                            <label class="form-check-label" for="keepAspectRatio">
+                                保持宽高比
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 其他现有选项 -->
+                <div class="row align-items-center mb-3">
+                    <div class="col">
+                        <label class="form-label">压缩质量: <span id="qualityValue">80%</span></label>
+                        <input type="range" class="form-range" id="qualitySlider" min="1" max="100" value="80">
+                    </div>
+                    <div class="col-auto">
+                        <input type="number" class="form-control" id="qualityInput" min="1" max="100" value="80">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label">输出格式:</label>
+                        <select class="form-select" id="formatSelect">
+                            <option value="image/jpeg">JPEG</option>
+                            <option value="image/png">PNG</option>
+                            <option value="image/webp">WebP</option>
+                            <option value="image/gif">GIF</option>
+                        </select>
+                    </div>
+                    <div class="col-auto d-flex align-items-end">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="keepOriginalFormat">
+                            <label class="form-check-label" for="keepOriginalFormat">
+                                保持原格式
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="batchCompress" checked>
+                            <label class="form-check-label" for="batchCompress">
+                                批量压缩全部图片
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary w-100" id="compressBtn">
+                    <i class="bi bi-magic"></i> 处理图片
+                </button>
+            </div>
+
+            <!-- 添加图片列表区域 -->
+            <div class="image-list" id="imageList" style="display: none;">
+                <h5 class="mb-3">待处理图片 (<span id="imageCount">0</span>)</h5>
+                <div class="image-grid" id="imageGrid"></div>
+            </div>
+
+            <!-- 预览区域 -->
+            <div class="preview-container" id="previewPanel" style="display: none;">
+                <h5 class="mb-3">压缩结果</h5>
+                <div id="resultGrid" class="result-grid"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 小工具集合. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/image-compressor.js"></script>
+</body>
+</html> 

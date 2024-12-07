@@ -1,0 +1,196 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Microsoft YaHei', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    padding: 1rem;
+}
+
+nav, .logo, nav ul, nav ul li, nav ul li a {
+    all: unset;
+}
+
+/* 修改导航栏相关样式 */
+.navbar {
+    background-color: #0d6efd;
+    padding: 0;
+    height: 48px;
+    width: 100%;
+}
+
+.container-fluid {
+    padding: 0;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0 16px;
+}
+
+.navbar-brand {
+    color: white !important;
+    padding: 0 1rem;
+    margin: 0;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.navbar-brand:hover {
+    color: white;
+}
+
+.navbar-nav {
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    height: 48px;
+}
+
+.nav-link {
+    color: white !important;
+    padding: 0 1rem;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    opacity: 0.8;
+    text-decoration: none;
+}
+
+.nav-link:hover {
+    opacity: 1;
+}
+
+.nav-link i {
+    margin-right: 0.3rem;
+}
+
+main {
+    flex: 1;
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.navbar-brand i,
+.card-title i {
+    margin-right: 0.5rem;
+}
+
+.nav-link i {
+    margin-right: 0.3rem;
+}
+
+/* 添加图片相关样式 */
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+    transition: transform 0.3s ease;
+}
+
+.img-fluid:hover {
+    transform: scale(1.02);
+}
+
+/* 添加移动端导航栏样式 */
+.navbar-toggler {
+    display: none;
+    border: none;
+    padding: 0.5rem;
+    margin-left: auto;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+@media (max-width: 768px) {
+    .navbar-toggler {
+        display: block;
+    }
+
+    .navbar-nav {
+        display: none;
+        position: absolute;
+        top: 48px;
+        left: 0;
+        width: 100%;
+        background-color: #0d6efd;
+        flex-direction: column;
+        height: auto;
+        padding: 0.5rem 0;
+    }
+
+    .navbar-nav.show {
+        display: flex;
+    }
+
+    .nav-link {
+        padding: 0.75rem 1rem;
+        height: auto;
+    }
+
+    .container-fluid {
+        padding: 0 1rem;
+    }
+}
+
+/* 添加移动端主页样式 */
+@media (max-width: 768px) {
+    .row-cols-md-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .p-5 {
+        padding: 1.5rem !important;
+    }
+
+    .display-5 {
+        font-size: 2rem;
+    }
+
+    .fs-4 {
+        font-size: 1rem !important;
+    }
+
+    .img-fluid {
+        margin-top: 1rem;
+    }
+} 
