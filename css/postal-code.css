@@ -1,0 +1,50 @@
+.postal-code-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.tool-section {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+.search-form {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.result-container {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.address-form {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.validation-result {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.validation-result.valid {
+    border-left: 4px solid #198754;
+}
+
+.validation-result.invalid {
+    border-left: 4px solid #dc3545;
+}
+
+@media (max-width: 768px) {
+    .tool-section {
+        padding: 1rem;
+    }
+} 
