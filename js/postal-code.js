@@ -59,7 +59,7 @@ class PostalCodeTool {
         const state = document.getElementById('stateInput').value.trim();
 
         if (!street || !city || !state) {
-            alert('请填写完整的��址信息！');
+            alert('请填写完整的街道地址信息！');
             return;
         }
 
