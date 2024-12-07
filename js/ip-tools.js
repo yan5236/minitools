@@ -12,56 +12,26 @@ class IPTools {
 
     async fetchIPInfo() {
         try {
-            // 获取IPv4信息（主要API）
-            let ipData;
-            try {
-                const response = await fetch('https://api.myip.com');
-                ipData = await response.json();
-            } catch {
-                // 如果主要API失败，使用备用API
-                const backupResponse = await fetch('https://ip.seeip.org/jsonip');
-                const backupData = await backupResponse.json();
-                ipData = {
-                    ip: backupData.ip,
-                    country: backupData.country,
-                    cc: backupData.code
-                };
-            }
+            // 获取IP信息
+            const response = await fetch('https://freeipapi.com/api/json');
+            const data = await response.json();
 
-            // 更新IP地址
-            document.getElementById('ipv4Address').textContent = ipData.ip;
+            // 更新IPv4地址
+            document.getElementById('ipv4Address').textContent = data.ipAddress;
 
-            // 尝试获取IPv6地址
-            try {
-                const ipv6Response = await fetch('https://api-ipv6.ip.sb/ip');
-                const ipv6Data = await ipv6Response.text();
-                document.getElementById('ipv6Address').textContent = ipv6Data.trim();
-            } catch {
-                document.getElementById('ipv6Address').textContent = '不支持或未启用';
-            }
+            // 更新IPv6地址
+            document.getElementById('ipv6Address').textContent = 
+                data.ipVersion === 6 ? data.ipAddress : '不支持或未启用';
 
-            // 更新基��信息
-            document.getElementById('country').textContent = `${ipData.country} (${ipData.cc})`;
-            
-            // 获取更多详细信息
-            try {
-                const geoResponse = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
-                const geoData = await geoResponse.json();
-                
-                document.getElementById('city').textContent = geoData.city || '未知';
-                document.getElementById('region').textContent = geoData.region || '未知';
-                document.getElementById('timezone').textContent = geoData.timezone || '未知';
-                document.getElementById('isp').textContent = geoData.org || '未知';
-                document.getElementById('location').textContent = 
-                    `${geoData.latitude || '-'}, ${geoData.longitude || '-'}`;
-            } catch {
-                // 如果获取详细信息失败，显示基本信息
-                document.getElementById('city').textContent = '未知';
-                document.getElementById('region').textContent = '未知';
-                document.getElementById('timezone').textContent = '未知';
-                document.getElementById('isp').textContent = '未知';
-                document.getElementById('location').textContent = '-';
-            }
+            // 更新详细信息
+            document.getElementById('country').textContent = 
+                `${data.countryName} (${data.countryCode})`;
+            document.getElementById('city').textContent = data.cityName || '未知';
+            document.getElementById('region').textContent = data.regionName || '未知';
+            document.getElementById('timezone').textContent = data.timeZone || '未知';
+            document.getElementById('isp').textContent = data.language || '未知';
+            document.getElementById('location').textContent = 
+                `${data.latitude || '-'}, ${data.longitude || '-'}`;
 
         } catch (error) {
             console.error('获取IP信息失败:', error);
