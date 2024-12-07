@@ -27,7 +27,7 @@
 
 1. 克隆仓库：
 bash
-git clone https://github.com/你的用户名/xiaogongju.git
+git clone https://github.com/yan
 
 2. 使用任意HTTP服务器运行，例如：
    - Python: `python -m http.server 8080`
