@@ -12,34 +12,57 @@ class IPTools {
 
     async fetchIPInfo() {
         try {
-            // 获取IP详细信息
-            const response = await fetch('http://ip-api.com/json/?fields=status,message,country,countryCode,region,regionName,city,timezone,isp,org,as,lat,lon,query');
-            const data = await response.json();
-
-            if (data.status === 'success') {
-                // 更新IP地址
-                document.getElementById('ipv4Address').textContent = data.query;
-
-                // 尝试获取IPv6地址
-                try {
-                    const ipv6Response = await fetch('https://api6.ipify.org?format=json');
-                    const ipv6Data = await ipv6Response.json();
-                    document.getElementById('ipv6Address').textContent = ipv6Data.ip;
-                } catch {
-                    document.getElementById('ipv6Address').textContent = '不支持或未启用';
-                }
-
-                // 更新详细信息
-                document.getElementById('country').textContent = `${data.country} (${data.countryCode})`;
-                document.getElementById('city').textContent = data.city || '未知';
-                document.getElementById('region').textContent = data.regionName || '���知';
-                document.getElementById('timezone').textContent = data.timezone || '未知';
-                document.getElementById('isp').textContent = data.isp || '未知';
-                document.getElementById('location').textContent = 
-                    `${data.lat}, ${data.lon}`;
-            } else {
-                throw new Error(data.message || '获取IP信息失败');
+            // 获取IPv4信息（主要API）
+            let ipData;
+            try {
+                const response = await fetch('https://api.myip.com');
+                ipData = await response.json();
+            } catch {
+                // 如果主要API失败，使用备用API
+                const backupResponse = await fetch('https://ip.seeip.org/jsonip');
+                const backupData = await backupResponse.json();
+                ipData = {
+                    ip: backupData.ip,
+                    country: backupData.country,
+                    cc: backupData.code
+                };
             }
+
+            // 更新IP地址
+            document.getElementById('ipv4Address').textContent = ipData.ip;
+
+            // 尝试获取IPv6地址
+            try {
+                const ipv6Response = await fetch('https://api-ipv6.ip.sb/ip');
+                const ipv6Data = await ipv6Response.text();
+                document.getElementById('ipv6Address').textContent = ipv6Data.trim();
+            } catch {
+                document.getElementById('ipv6Address').textContent = '不支持或未启用';
+            }
+
+            // 更新基��信息
+            document.getElementById('country').textContent = `${ipData.country} (${ipData.cc})`;
+            
+            // 获取更多详细信息
+            try {
+                const geoResponse = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
+                const geoData = await geoResponse.json();
+                
+                document.getElementById('city').textContent = geoData.city || '未知';
+                document.getElementById('region').textContent = geoData.region || '未知';
+                document.getElementById('timezone').textContent = geoData.timezone || '未知';
+                document.getElementById('isp').textContent = geoData.org || '未知';
+                document.getElementById('location').textContent = 
+                    `${geoData.latitude || '-'}, ${geoData.longitude || '-'}`;
+            } catch {
+                // 如果获取详细信息失败，显示基本信息
+                document.getElementById('city').textContent = '未知';
+                document.getElementById('region').textContent = '未知';
+                document.getElementById('timezone').textContent = '未知';
+                document.getElementById('isp').textContent = '未知';
+                document.getElementById('location').textContent = '-';
+            }
+
         } catch (error) {
             console.error('获取IP信息失败:', error);
             alert('获取IP信息失败，请稍后重试！');
@@ -58,7 +81,7 @@ class IPTools {
 
     copyToClipboard(elementId) {
         const text = document.getElementById(elementId).textContent;
-        if (text === '获取中...' || text === '不支持或未启用' || text === '获取失败') {
+        if (text === '获取中...' || text === '不支持或未启用' || text === '获取失败' || text === '-') {
             alert('暂无可复制的内容！');
             return;
         }
