@@ -12,26 +12,32 @@ class IPTools {
 
     async fetchIPInfo() {
         try {
-            // 获取IP信息
-            const response = await fetch('https://freeipapi.com/api/json');
-            const data = await response.json();
+            // 获取IPv4信息
+            const ipv4Response = await fetch('https://api.ipify.org?format=json');
+            const ipv4Data = await ipv4Response.json();
+            document.getElementById('ipv4Address').textContent = ipv4Data.ip;
 
-            // 更新IPv4地址
-            document.getElementById('ipv4Address').textContent = data.ipAddress;
+            // 获取IPv6信息
+            try {
+                const ipv6Response = await fetch('https://api64.ipify.org?format=json');
+                const ipv6Data = await ipv6Response.json();
+                document.getElementById('ipv6Address').textContent = ipv6Data.ip;
+            } catch {
+                document.getElementById('ipv6Address').textContent = '不支持或未启用';
+            }
 
-            // 更新IPv6地址
-            document.getElementById('ipv6Address').textContent = 
-                data.ipVersion === 6 ? data.ipAddress : '不支持或未启用';
+            // 获取IP详细信息
+            const geoResponse = await fetch(`https://ipapi.co/${ipv4Data.ip}/json/`);
+            const geoData = await geoResponse.json();
 
             // 更新详细信息
-            document.getElementById('country').textContent = 
-                `${data.countryName} (${data.countryCode})`;
-            document.getElementById('city').textContent = data.cityName || '未知';
-            document.getElementById('region').textContent = data.regionName || '未知';
-            document.getElementById('timezone').textContent = data.timeZone || '未知';
-            document.getElementById('isp').textContent = data.language || '未知';
+            document.getElementById('country').textContent = `${geoData.country_name} (${geoData.country_code})`;
+            document.getElementById('city').textContent = geoData.city || '未知';
+            document.getElementById('region').textContent = geoData.region || '未知';
+            document.getElementById('timezone').textContent = geoData.timezone || '未知';
+            document.getElementById('isp').textContent = geoData.org || '未知';
             document.getElementById('location').textContent = 
-                `${data.latitude || '-'}, ${data.longitude || '-'}`;
+                `${geoData.latitude || '-'}, ${geoData.longitude || '-'}`;
 
         } catch (error) {
             console.error('获取IP信息失败:', error);
