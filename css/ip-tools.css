@@ -1,0 +1,69 @@
+.ip-tools-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.tool-section {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+.info-card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.info-card h6 {
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.info-card h6 i {
+    margin-right: 0.5rem;
+}
+
+.ip-address {
+    font-family: monospace;
+    font-size: 1.1rem;
+    color: #0d6efd;
+}
+
+.ip-details {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.detail-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-item label {
+    color: #6c757d;
+    margin-right: 0.5rem;
+    min-width: 100px;
+    display: inline-block;
+}
+
+#refreshBtn i {
+    margin-right: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .tool-section {
+        padding: 1rem;
+    }
+
+    .detail-item label {
+        min-width: 80px;
+    }
+} 

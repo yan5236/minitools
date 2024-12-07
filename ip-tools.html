@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP工具 - MiniTools</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/ip-tools.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container-fluid">
+            <div class="navbar-left">
+                <a class="navbar-brand" href="index.html">
+                    <i class="bi bi-tools"></i> MiniTools
+                </a>
+                <div class="navbar-nav">
+                    <a class="nav-link" href="index.html">
+                        <i class="bi bi-house"></i> 首页
+                    </a>
+                    <a class="nav-link" href="index.html#tools">
+                        <i class="bi bi-gear"></i> 工具
+                    </a>
+                    <a class="nav-link" href="index.html#about">
+                        <i class="bi bi-info-circle"></i> 关于
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-4">
+        <div class="ip-tools-container">
+            <!-- 当前IP信息 -->
+            <div class="tool-section">
+                <h5 class="mb-3">当前IP信息</h5>
+                <div class="ip-info">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <h6><i class="bi bi-hdd-network"></i> IPv4 地址</h6>
+                                <div class="d-flex align-items-center">
+                                    <span id="ipv4Address" class="ip-address">获取中...</span>
+                                    <button class="btn btn-outline-secondary btn-sm ms-2" onclick="ipTools.copyToClipboard('ipv4Address')">
+                                        <i class="bi bi-clipboard"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <h6><i class="bi bi-hdd-network-fill"></i> IPv6 地址</h6>
+                                <div class="d-flex align-items-center">
+                                    <span id="ipv6Address" class="ip-address">获取中...</span>
+                                    <button class="btn btn-outline-secondary btn-sm ms-2" onclick="ipTools.copyToClipboard('ipv6Address')">
+                                        <i class="bi bi-clipboard"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- IP详细信息 -->
+            <div class="tool-section mt-4">
+                <h5 class="mb-3">IP详细信息</h5>
+                <div class="ip-details">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label>国家/地区：</label>
+                                <span id="country">获取中...</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>城市：</label>
+                                <span id="city">获取中...</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>ISP：</label>
+                                <span id="isp">获取中...</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label>地区：</label>
+                                <span id="region">获取中...</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>时区：</label>
+                                <span id="timezone">获取中...</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>经纬度：</label>
+                                <span id="location">获取中...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <button class="btn btn-primary" id="refreshBtn">
+                        <i class="bi bi-arrow-clockwise"></i> 刷新信息
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 MiniTools. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/ip-tools.js"></script>
+</body>
+</html> 
