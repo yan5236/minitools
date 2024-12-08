@@ -267,7 +267,7 @@ class ImageCompressor {
 
         try {
             if (this.compressedImages.size === 1) {
-                // 张图片直接下载
+                // 张图片直接下��
                 const [filename, blob] = this.compressedImages.entries().next().value;
                 await this.downloadSingleImage(blob, filename);
             } else {
