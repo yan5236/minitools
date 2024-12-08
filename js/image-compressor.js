@@ -1,3 +1,26 @@
+// 等待压缩库加载完成
+function waitForImageCompression() {
+    return new Promise((resolve, reject) => {
+        if (typeof imageCompression === 'function') {
+            resolve();
+            return;
+        }
+
+        let attempts = 0;
+        const maxAttempts = 10;
+        const interval = setInterval(() => {
+            attempts++;
+            if (typeof imageCompression === 'function') {
+                clearInterval(interval);
+                resolve();
+            } else if (attempts >= maxAttempts) {
+                clearInterval(interval);
+                reject(new Error('图片压缩库加载失败'));
+            }
+        }, 500);
+    });
+}
+
 class ImageCompressor {
     constructor() {
         this.imageQueue = new Map();
@@ -283,7 +306,7 @@ class ImageCompressor {
     getOutputFormat() {
         const keepOriginal = document.getElementById('keepOriginalFormat').checked;
         if (keepOriginal) {
-            return undefined; // 使用原���格式
+            return undefined; // 使用原格式
         }
         const formatSelect = document.getElementById('outputFormat');
         return formatSelect.value;
@@ -367,8 +390,14 @@ class ImageCompressor {
 
 // 初始化工具
 let imageCompressor;
-document.addEventListener('DOMContentLoaded', () => {
-    imageCompressor = new ImageCompressor();
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await waitForImageCompression();
+        imageCompressor = new ImageCompressor();
+    } catch (error) {
+        console.error('初始化失败:', error);
+        alert('图片压缩功能初始化失败，请刷新页面重试');
+    }
 });
 
 // 页面卸载时清理资源
