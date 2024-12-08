@@ -10,20 +10,30 @@ class ImageCompressor {
         // 文件输入处理
         const fileInput = document.getElementById('fileInput');
         const dropZone = document.getElementById('dropZone');
+        const compressBtn = document.getElementById('compressBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
 
-        // 修复文件选择事件
+        if (!fileInput || !dropZone || !compressBtn || !downloadBtn) {
+            console.error('必要的DOM元素未找到:', {
+                fileInput: !!fileInput,
+                dropZone: !!dropZone,
+                compressBtn: !!compressBtn,
+                downloadBtn: !!downloadBtn
+            });
+            return;
+        }
+
+        // 文件选择事件
         fileInput.addEventListener('change', (e) => {
             const files = e.target.files;
             if (files && files.length > 0) {
                 this.handleFiles(files);
-                // 重置文件输入以允许选择相同文件
                 fileInput.value = '';
             }
         });
 
         // 点击上传区域触发文件选择
         dropZone.addEventListener('click', (e) => {
-            // 防止重复触发
             if (e.target === dropZone || e.target.parentElement === dropZone) {
                 fileInput.click();
             }
@@ -53,13 +63,12 @@ class ImageCompressor {
         });
 
         // 压缩按钮事件
-        document.getElementById('compressBtn').addEventListener('click', async () => {
+        compressBtn.addEventListener('click', async () => {
             if (this.imageQueue.size === 0) {
                 alert('请先添加图片！');
                 return;
             }
             
-            // 清理之前的压缩结果
             await this.clearPreviousResults();
             
             try {
@@ -79,7 +88,7 @@ class ImageCompressor {
         });
 
         // 下载按钮事件
-        document.getElementById('downloadBtn').addEventListener('click', async () => {
+        downloadBtn.addEventListener('click', async () => {
             try {
                 await this.downloadImages();
             } catch (error) {
@@ -235,7 +244,7 @@ class ImageCompressor {
 
         try {
             if (this.compressedImages.size === 1) {
-                // ���张图片直接下载
+                // 张图片直接下载
                 const [filename, blob] = this.compressedImages.entries().next().value;
                 await this.downloadSingleImage(blob, filename);
             } else {
@@ -274,7 +283,7 @@ class ImageCompressor {
     getOutputFormat() {
         const keepOriginal = document.getElementById('keepOriginalFormat').checked;
         if (keepOriginal) {
-            return undefined; // 使用原始格式
+            return undefined; // 使用原���格式
         }
         const formatSelect = document.getElementById('outputFormat');
         return formatSelect.value;
