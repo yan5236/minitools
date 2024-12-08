@@ -16,4 +16,23 @@
   vertical-align: -.125em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-} 
+}
+
+/* 添加所有图标定义 */
+.bi-tools::before { content: "\f875"; }
+.bi-house::before { content: "\f425"; }
+.bi-gear::before { content: "\f3e5"; }
+.bi-info-circle::before { content: "\f431"; }
+.bi-calculator::before { content: "\f1ef"; }
+.bi-clock::before { content: "\f294"; }
+.bi-code-square::before { content: "\f2c2"; }
+.bi-image::before { content: "\f428"; }
+.bi-file-text::before { content: "\f38d"; }
+.bi-palette::before { content: "\f6b7"; }
+.bi-mailbox::before { content: "\f5ee"; }
+.bi-globe::before { content: "\f3ef"; }
+.bi-cloud-upload::before { content: "\f2d8"; }
+.bi-magic::before { content: "\f5ee"; }
+.bi-download::before { content: "\f30a"; }
+.bi-clipboard::before { content: "\f289"; }
+.bi-search::before { content: "\f52a"; } 
