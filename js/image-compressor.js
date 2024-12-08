@@ -21,6 +21,44 @@ function waitForImageCompression() {
     });
 }
 
+// 等待DOM元素加载完成
+function waitForElements() {
+    return new Promise((resolve, reject) => {
+        const elements = {
+            fileInput: document.getElementById('fileInput'),
+            dropZone: document.getElementById('dropZone'),
+            compressBtn: document.getElementById('compressBtn'),
+            downloadBtn: document.getElementById('downloadBtn')
+        };
+
+        if (Object.values(elements).every(el => el)) {
+            resolve(elements);
+            return;
+        }
+
+        let attempts = 0;
+        const maxAttempts = 10;
+        const interval = setInterval(() => {
+            attempts++;
+            elements.fileInput = document.getElementById('fileInput');
+            elements.dropZone = document.getElementById('dropZone');
+            elements.compressBtn = document.getElementById('compressBtn');
+            elements.downloadBtn = document.getElementById('downloadBtn');
+
+            if (Object.values(elements).every(el => el)) {
+                clearInterval(interval);
+                resolve(elements);
+            } else if (attempts >= maxAttempts) {
+                clearInterval(interval);
+                const missing = Object.entries(elements)
+                    .filter(([_, el]) => !el)
+                    .map(([name]) => name);
+                reject(new Error(`DOM元素未找到: ${missing.join(', ')}`));
+            }
+        }, 500);
+    });
+}
+
 class ImageCompressor {
     constructor() {
         this.imageQueue = new Map();
@@ -267,7 +305,7 @@ class ImageCompressor {
 
         try {
             if (this.compressedImages.size === 1) {
-                // 张图片直接下��
+                // 张图片直接下载
                 const [filename, blob] = this.compressedImages.entries().next().value;
                 await this.downloadSingleImage(blob, filename);
             } else {
@@ -392,11 +430,31 @@ class ImageCompressor {
 let imageCompressor;
 document.addEventListener('DOMContentLoaded', async () => {
     try {
+        // 等待压缩库加载
         await waitForImageCompression();
+        console.log('压缩库加载成功');
+
+        // 等待DOM元素加载
+        await waitForElements();
+        console.log('DOM元素加载成功');
+
+        // 初始化压缩工具
         imageCompressor = new ImageCompressor();
+        console.log('压缩工具初始化成功');
     } catch (error) {
         console.error('初始化失败:', error);
-        alert('图片压缩功能初始化失败，请刷新页面重试');
+        // 在页面上显示错误信息
+        const container = document.querySelector('.image-compressor-container');
+        if (container) {
+            container.innerHTML = `
+                <div class="alert alert-danger" role="alert">
+                    <h4 class="alert-heading">初始化失败</h4>
+                    <p>${error.message}</p>
+                    <hr>
+                    <p class="mb-0">请刷新页面重试。如果问题持续存在，请检查浏览器控制台获取详细信息。</p>
+                </div>
+            `;
+        }
     }
 });
 
