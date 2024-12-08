@@ -9,7 +9,7 @@ class ImageCompressor {
     setupEventListeners() {
         // 文件输入处理
         const fileInput = document.getElementById('fileInput');
-        const uploadArea = document.getElementById('uploadArea');
+        const dropZone = document.getElementById('dropZone');
 
         // 修复文件选择事件
         fileInput.addEventListener('change', (e) => {
@@ -22,30 +22,30 @@ class ImageCompressor {
         });
 
         // 点击上传区域触发文件选择
-        uploadArea.addEventListener('click', (e) => {
+        dropZone.addEventListener('click', (e) => {
             // 防止重复触发
-            if (e.target === uploadArea || e.target.parentElement === uploadArea) {
+            if (e.target === dropZone || e.target.parentElement === dropZone) {
                 fileInput.click();
             }
         });
 
         // 拖放处理
-        uploadArea.addEventListener('dragover', (e) => {
+        dropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            uploadArea.classList.add('dragover');
+            dropZone.classList.add('dragover');
         });
 
-        uploadArea.addEventListener('dragleave', (e) => {
+        dropZone.addEventListener('dragleave', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            uploadArea.classList.remove('dragover');
+            dropZone.classList.remove('dragover');
         });
 
-        uploadArea.addEventListener('drop', (e) => {
+        dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            uploadArea.classList.remove('dragover');
+            dropZone.classList.remove('dragover');
             const files = e.dataTransfer.files;
             if (files && files.length > 0) {
                 this.handleFiles(files);
@@ -235,7 +235,7 @@ class ImageCompressor {
 
         try {
             if (this.compressedImages.size === 1) {
-                // 单张图片直接下载
+                // ���张图片直接下载
                 const [filename, blob] = this.compressedImages.entries().next().value;
                 await this.downloadSingleImage(blob, filename);
             } else {
